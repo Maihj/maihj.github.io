@@ -53,7 +53,7 @@
                 <p>graph-based 的方法提供了一种截然不同的思路：将每个向量视为图中的一个节点，在相似的向量之间建立"边"连接，从而构成一个近邻图（Proximity Graph）。搜索时，从图中的某个入口点出发，沿着边贪心地向查询向量方向移动，逐步逼近真正的最近邻。</p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <img src="../images/graph-vector-search.png" alt="graph-vector-search" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <img src="../images/nsw_hnsw/graph-vector-search.png" alt="graph-vector-search" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图1: 基于图的向量搜索</p>
                 </div>
 
@@ -76,7 +76,7 @@
                 <p>1998年，Watts 和 Strogatz 在 Nature 上发表了开创性的论文，提出了小世界网络模型。该模型指出，一个网络只要同时具备两个特性——高聚类系数（局部连接紧密）和短平均路径长度（全局可达性好），就构成一个小世界网络。直观来看，高聚类意味着"你朋友的朋友很可能也是你的朋友"，而短路径意味着任意两个节点之间只需少数几跳就能到达。</p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <img src="../images/small-world-network.png" alt="小世界网络" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <img src="../images/nsw_hnsw/small-world-network.png" alt="小世界网络" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图2: 小世界网络</p>
                 </div>
                 
@@ -88,7 +88,7 @@
                 <p>NSW 的关键洞察在于：如果我们按照随机顺序逐个插入向量，并且每次插入时通过当前图的贪心搜索找到最近邻作为连接对象，那么早期插入的节点会自然地成为长距离连接。这是因为在图的早期阶段，节点数量少，贪心搜索找到的"最近邻"，实际上可能在向量空间中距离较远，这些连接恰好充当了跨越大范围空间的"高速公路"（highway），使得搜索可以快速从图的一个区域跳到另一个区域。随着更多节点的插入，新建立的连接会越来越局部化，从而提供精细的局部搜索能力。长距离连接和短距离连接的自然共存，正是 NSW 具备可导航性（navigability）的根本原因。</p>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <img src="../images/NSW.png" alt="NSW" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <img src="../images/nsw_hnsw/NSW.png" alt="NSW" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图3: NSW</p>
                 </div>
 
@@ -153,7 +153,7 @@
                 <p><strong>HNSW 将这个思想从一维有序结构推广到高维向量空间</strong>：构建一个多层图，顶层包含极少的节点和长距离连接用于全局导航，底层包含所有节点和短距离连接用于精确搜索。每个节点被随机分配到一个最大层级，出现在从第 0 层到该层级的所有层上。</p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <img src="../images/skip-list-hierarchical.png" alt="Skip List与分层图" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <img src="../images/nsw_hnsw/skip-list-hierarchical.png" alt="Skip List与分层图" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图4: Skip List与分层图</p>
                 </div>
 
@@ -171,7 +171,7 @@
                 <p><strong>步骤四：连接数限制。</strong>当一个已有节点因为新插入而获得了过多连接时，需要将其连接数修剪到不超过 Mmax（底层为 Mmax0，通常设为 2 * M）。</p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                    <img src="../images/HNSW.png" alt="HNSW" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <img src="../images/nsw_hnsw/HNSW.png" alt="HNSW" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图5: HNSW</p>
                 </div>
 
@@ -234,19 +234,46 @@
                 <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: rgba(26, 26, 58, 0.6); border-radius: 10px; overflow: hidden;">
                     <thead>
                         <tr style="background: rgba(0, 255, 136, 0.2);">
-                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.3);">特性</th>
-                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.3);">NSW</th>
-                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.3);">HNSW</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">特性</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">NSW</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1);">HNSW</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">图结构</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">单层图</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">多层图</td></tr>
-                        <tr><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">搜索复杂度</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">O(log<sup>k</sup>N)</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">O(log N)</td></tr>
-                        <tr><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">长距离/短距离连接</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">隐式混合（依赖插入顺序）</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">显式分层（高层长距离，低层短距离）</td></tr>
-                        <tr><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">入口点策略</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">多个随机入口点</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">单一固定入口点（最高层节点）</td></tr>
-                        <tr><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">节点度数分布</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">不均匀（早期节点度数高）</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">每层均匀受限（≤ Mmax）</td></tr>
-                        <tr><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">内存开销</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">中等</td><td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">较高（多层结构）</td></tr>
-                        <tr><td style="padding: 12px;">工业应用</td><td style="padding: 12px;">较少</td><td style="padding: 12px;">广泛（Faiss, Milvus等）</td></tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">图结构</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">单层图</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">多层图</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">搜索复杂度</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">O(log<sup>k</sup>N)</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">O(log N)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">长距离/短距离连接</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">隐式混合（依赖插入顺序）</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">显式分层（高层长距离，低层短距离）</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">入口点策略</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">多个随机入口点</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">单一固定入口点（最高层节点）</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">节点度数分布</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">不均匀（早期节点度数高）</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">每层均匀受限（≤ Mmax）</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">内存开销</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">中等</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">较高（多层结构）</td>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">工业应用</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">较少</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">广泛（Faiss, Milvus等）</td>
+                        </tr>
                     </tbody>
                 </table>
 
@@ -272,9 +299,6 @@
     
     <footer class="footer">
         <p>&copy; Maihj. All rights reserved.</p>
-        <div class="social-links">
-            <a href="https://github.com/maihj" target="_blank">GitHub</a>
-        </div>
     </footer>
     
     <script>

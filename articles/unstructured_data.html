@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>什么是非结构化数据</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="starfield"></div>
+    <div class="stars" id="stars"></div>
+    <div class="binary-rain" id="binary-rain"></div>
+    
+    <nav class="navbar">
+        <a href="../index.html" class="logo">&lt;/Start&gt;</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">首页</a></li>
+            <li><a href="../index.html#articles">文章</a></li>
+            <li><a href="../about.html">关于</a></li>
+            <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+    
+    <main class="main-content">
+        <div class="article-page">
+            <a href="../index.html" class="back-btn">← 返回首页</a>
+            <header class="article-header">
+                <h1>什么是非结构化数据</h1>
+                <p class="article-meta">发布于 2026-03-21</p>
+            </header>
+            
+            <article class="article-content">
+                <h2>背景</h2>
+                <p>根据 IDC（International Data Corporation，国际数据公司）的预测，全球数据量 Global DataSphere 到 2028 年将增长至 393.8 ZB，其中，<strong>非结构化数据占比 82.3%</strong>，是最主要的数据形式。</p>
+                <p>那么，非结构化数据究竟是什么呢？顾名思义，非结构化数据是指无法以预定义格式存储或融入现有数据模型的数据，例如我们熟知的文本、图像、音频、视频，同时，也包括各种不那么常见的非结构化数据，例如蛋白质结构、代码。与「非结构化数据」相对应的是「结构化数据」和「半结构化数据」，今天，我们来具体看看这三类数据的区别。</p>
+
+                <h2>结构化数据</h2>
+                <ul>
+                    <li>有预定义的格式、明确的schema</li>
+                    <li>通过关系模型来存储</li>
+                </ul>
+                <p>例如，图片库中每张图片的基本信息：图片id、类型、大小、创建时间。在表格中，每一行数据代表一张图片的信息。</p>
+                
+                <table style="width:80%; border-collapse: collapse; margin: 20px 0; background: rgba(26, 26, 58, 0.6); border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: rgba(0, 255, 136, 0.2);">
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">图片id</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">类型</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">大小</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1);">创建时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">0001</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">JPEG</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">10MB</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">2025-06-01 10:00:00</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">0002</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">PNG</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">3MB</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">2025-06-02 10:00:00</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">0003</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">PNG</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">5MB</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">2025-06-03 10:00:00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p>结构化数据通常存储于关系型数据库，例如 <strong>MySQL</strong> 和 <strong>PostgreSQL</strong>。</p>
+
+                <h2>半结构化数据</h2>
+                <p>半结构化数据不拘泥于传统的基于表的模型，半结构化数据通常带有 key 或 标记，可用于描述和索引数据，例如 JSON、XML格式。回到上面关于图片的例子，我们可以将其扩展为半结构化 JSON 格式，每张图片可以保存不同的信息。</p>
+                
+<pre><code>{
+  图片id: 0001
+  类型: JPEG
+  大小: 10MB
+  创建时间: 2025-06-01 10:00:00
+  拍摄地区: 内蒙古
+  描述：草原风景
+},
+{
+  图片id: 0002
+  类型: JPEG
+  创建时间: 2025-06-01 10:00:00
+},
+{
+  图片id: 0003
+  类型: JPEG
+  大小: 5MB
+  拍摄地区: 海南
+},
+...</code></pre>
+
+                <p>半结构化数据通常存储于 NoSQL 数据库，例如 <strong>MongoDB</strong> 和 <strong>Redis</strong>。</p>
+
+                <h2>非结构化数据</h2>
+                <p>不同于结构化数据和半结构化数据，非结构化数据没有固定的格式。</p>
+                <p>再次回到上面关于图片的例子，<strong>图片本身</strong>，即非结构化数据。当然，除了图片，还有很多不同类型的非结构化数据，例如视频和音频等。</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/unstructured_data/picture.png" alt="非结构化数据-图片" style="max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图1: 非结构化数据-图片</p>
+                </div>
+
+                <p>这时候，问题来了，我们应该如何存储和分析这些图片呢？也许我们可以将图片转换成二进制字符串，然后将它作为结构化数据或半结构化数据保存起来，但是这样，新的问题又出现了：</p>
+                <ul>
+                    <li>对于相似的图片，可能对应的二进制字符串差异很大，如何保证在搜索时，能够返回正确的结果呢？</li>
+                    <li>当图片库有大量图片时，如何能够高效地进行搜索呢？</li>
+                </ul>
+                
+                <p>幸运的是，通过机器学习（深度学习），结合大数据和深度神经网络，目前已经有多种模型，可以将非结构化数据转化成 <strong>embedding</strong>，即非结构化数据的向量化表示。</p>
+                
+<pre><code>[0.1322, 0.7632, 0.6518, ..., 0.8128, 0.2621, 0.9557]</code></pre>
+
+                <p>所以，为了提高非结构化数据的搜索准确度和效率，通常会将其转化成向量，保存在<strong>向量数据库</strong>（例如 Milvus）中，对于非结构化数据的搜索，也转变为向量的搜索，即通过计算向量距离，来评估非结构化数据之间的相似度。</p>
+
+                <h2>总结</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: rgba(26, 26, 58, 0.6); border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: rgba(0, 255, 136, 0.2);">
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);"">数据类型</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);"">特点</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);"">存储方式</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);"">示例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">结构化数据</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">预定义格式、明确schema</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">关系型数据库（MySQL、PostgreSQL）</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">表格数据、交易记录</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">半结构化数据</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">带有标记或key，灵活格式</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">NoSQL数据库（MongoDB、Redis）</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">JSON、XML文档</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">非结构化数据</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">无固定格式</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">向量数据库（Milvus）</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">图片、视频、音频、文本</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; Maihj. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        function createBinaryRain() {
+            const rainContainer = document.getElementById('binary-rain');
+            const columnCount = 30;
+            for (let i = 0; i < columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-column';
+                column.style.left = (i / columnCount * 100) + '%';
+                column.style.setProperty('--duration', (Math.random() * 10 + 15) + 's');
+                column.style.animationDelay = Math.random() * 15 + 's';
+                let binaryString = '';
+                const length = Math.floor(Math.random() * 30 + 20);
+                for (let j = 0; j < length; j++) {
+                    binaryString += Math.random() > 0.5 ? '1' : '0';
+                }
+                column.textContent = binaryString;
+                rainContainer.appendChild(column);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createBinaryRain();
+        });
+    </script>
+</body>
+</html>

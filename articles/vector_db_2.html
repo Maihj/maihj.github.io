@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>什么是向量数据库（二）</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="starfield"></div>
+    <div class="stars" id="stars"></div>
+    <div class="binary-rain" id="binary-rain"></div>
+    
+    <nav class="navbar">
+        <a href="../index.html" class="logo">&lt;/Start&gt;</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">首页</a></li>
+            <li><a href="../index.html#articles">文章</a></li>
+            <li><a href="../about.html">关于</a></li>
+            <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+    
+    <main class="main-content">
+        <div class="article-page">
+            <a href="../index.html" class="back-btn">← 返回首页</a>
+            <header class="article-header">
+                <h1>什么是向量数据库（二）</h1>
+                <p class="article-meta">发布于 2026-03-21</p>
+            </header>
+            
+            <article class="article-content">
+                <h2>回顾</h2>
+                <p>在文章「什么是向量数据库（一）」中已经提过，传统数据库无法很好的支撑：</p>
+                <ul>
+                    <li>语义搜索，依赖向量相似性（similarity）</li>
+                    <li>计算相似性消耗大量计算资源，相比传统的 predicate（例如 filter）</li>
+                    <li>大规模非结构化数据的存储和搜索</li>
+                </ul>
+
+                <h2>向量数据库的挑战</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: rgba(26, 26, 58, 0.6); border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: rgba(0, 255, 136, 0.2);">
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">问题</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">挑战</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1);">解决方案</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">信息丢失损耗</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">经过 embedding 生成的向量会丢失部分原始信息</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">混合搜索（结合关键词和向量）、多模态特征融合</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">计算速度慢</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">暴力搜索的计算瓶颈（计算量 ≈ 向量数量 × 向量维度）</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">ANN（Approximate Nearest Neighbors）算法</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">索引难</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">高维空间无法直接排序</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">LSH、ANNOY、IVF、HNSW等向量索引算法</td>
+                        </tr> 
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">空间占用大</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">高维向量的存储开销（例如1024维浮点向量需 4KB 空间）</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">向量压缩技术（Quantization）</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">数据量大</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">高并发处理难度大</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">sharding、partitioning、caching</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">可用性</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">数据的可用性和可靠性</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">replication</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>总的来说，向量数据库的目标就是：<strong>既要快速响应，又要结果准确</strong>。</p>
+                <p>下面将从查询处理、向量索引和存储技术上分别进行介绍。</p>
+
+                <h2>查询处理</h2>
+                
+                <h3>通过向量距离衡量相似度</h3>
+                <p>通过计算两个向量之间的距离来评估向量相似度，下面是几种常见的计算方式。</p>
+                <p>给定两个向量 <code>a</code> 和 <code>b</code>，维度都是 <code>D</code>：</p>
+                
+                <p><strong>汉明距离（hamming distance）：</strong></p>
+                <ul>
+                    <li>计算公式：</li>
+                    <div style="text-align: center; margin: 20px 0; padding: 15px; background: rgba(26, 26, 58, 0.6); border-radius: 10px;">
+                    <span style="font-size: 1.3rem; font-family: 'Times New Roman', serif; color: #ffffff;">
+                        <i>d</i>(<b>a</b>, <b>b</b>) = 
+                        <span style="display: inline-block; vertical-align: middle; text-align: center;">
+                            <sup style="display: block; font-size: 0.8rem; margin-bottom: -5px;"><i>n</i></sup>
+                            <span style="font-size: 2.0rem; line-height: 1;">∑</span>
+                            <sub style="display: block; font-size: 0.8rem; margin-top: -5px;"><i>i</i>=1</sub>
+                        </span>
+                        Δ<i>a</i><sub><i>i</i></sub><i>b</i><sub><i>i</i></sub>
+                    </span>
+                    </div>
+                    <li>相似度范围：[0, D]</li>
+                    <li>计算向量 a 和 b 在不同维度上值不同的数量，通常用于二进制向量；<strong>值越小，向量越相似</strong></li>
+                </ul>
+                
+                <p><strong>余弦相似度（cosine similarity）：</strong></p>
+                <ul>
+                    <li>计算公式：</li>
+                    <div style="text-align: center; margin: 20px 0; padding: 15px; background: rgba(26, 26, 58, 0.6); border-radius: 10px;">
+                        <span style="font-size: 1.3rem; font-family: 'Times New Roman', serif; color: #ffffff;">
+                            cos(<b>a</b>, <b>b</b>) = 
+                            <span style="display: inline-block; vertical-align: middle; text-align: center;">
+                                <span style="display: block; border-bottom: 1px solid #ffffff; padding-bottom: 3px; margin-bottom: 3px;"><b>a</b> · <b>b</b></span>
+                                <span style="display: block; padding-top: 1px;">‖<b>a</b>‖ · ‖<b>b</b>‖</span>
+                            </span>
+                        </span>
+                    </div>
+                    <li>相似度范围：[-1, 1]</li>
+                    <li>适用于关注向量的方向，而不是长度；<strong>值越大，向量越相似</strong></li>
+                </ul>
+                
+                <p><strong>欧氏距离（euclidean distance）：</strong></p>
+                <ul>
+                    <li>计算公式：</li>
+                    <div style="text-align: center; margin: 20px 0; padding: 15px; background: rgba(26, 26, 58, 0.6); border-radius: 10px;">
+                        <span style="font-size: 1.3rem; font-family: 'Times New Roman', serif; color: #ffffff;">
+                            <i>d</i>(<b>a</b>, <b>b</b>) = ‖<b>a</b> − <b>b</b>‖
+                        </span>
+                    </div>
+                    <li>相似度范围：[0, ∞)</li>
+                    <li>适用于关注向量的长度，而不是方向；<strong>值越小，向量越相似</strong></li>
+                </ul>
+                
+                <p><strong>内积（inner product）：</strong></p>
+                <ul>
+                    <li>计算公式：</li>
+                    <div style="text-align: center; margin: 20px 0; padding: 15px; background: rgba(26, 26, 58, 0.6); border-radius: 10px;">
+                        <span style="font-size: 1.3rem; font-family: 'Times New Roman', serif; color: #ffffff;">
+                            <b>a</b> · <b>b</b> = 
+                            <span style="display: inline-block; vertical-align: middle; text-align: center;">
+                                <sup style="display: block; font-size: 0.8rem; margin-bottom: -5px;"><i>n</i></sup>
+                                <span style="font-size: 2.0rem; line-height: 1;">∑</span>
+                                <sub style="display: block; font-size: 0.8rem; margin-top: -5px;"><i>i</i>=1</sub>
+                            </span>
+                            <i>a</i><sub><i>i</i></sub><i>b</i><sub><i>i</i></sub> = ‖<b>a</b>‖ · ‖<b>b</b>‖ · cos(<b>a</b>, <b>b</b>)
+                        </span>
+                    </div>
+                    <li>相似度范围：[-1, 1]</li>
+                    <li>适用于关注向量的方向和长度；<strong>值越大，向量越相似</strong></li>
+                </ul>
+                
+                <p>NOTE：维度不相同的两个向量，无法计算相似度</p>
+
+                <h3>增、删、改、查</h3>
+                <p>对于增（insert）、删（delete）、改（update）这三类操作，在传统数据库中可以直接、方便地实现。在向量数据库中，向量是实际数据embedding的结果，所以，对于增、删、改，可以有两种不同的方式：</p>
+                <ul>
+                    <li><strong>embedding model 在向量数据库之外</strong>：向量数据库直接保存向量数据；由于向量的 size 比较庞大，所以通常在插入向量时，加上一个用户定义的 id，方便后续修改和删除该向量</li>
+                    <li><strong>embedding model 在向量数据库之内</strong>（包括直接调用外部模型和内置的预训练模型）：对于用户来说，存储的是实际数据本身（例如文本和图片），而向量是被隐藏存储的一部分</li>
+                </ul>
+                
+                <p>对于查询 q，本质上是在向量集合中，找到与 q 最相似的 k 个向量（k ≥ 1）。假设向量集合中有 N 个向量，随着 N 逐渐变大，计算最优的近似向量并不现实，时间复杂度达到 O(N * D)，D 是向量的维度，所以，为了提高性能，设计了 ANN 算法，一个好的 ANN 算法要在<strong>速度快</strong>和<strong>找得准</strong>之间找到平衡点。</p>
+                
+                <p>衡量向量的准确性通常通过 precision 和 recall：</p>
+                <ul>
+                    <li><strong>precision</strong>：c / k'，返回的结果中有多少是正确的</li>
+                    <li><strong>recall</strong>：c / k，正确结果中有多少被找到</li>
+                </ul>
+                <p>其中，返回的 k' 个结果中，其中正确的结果有 c 个，目标是找最相似的 k 个向量。</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/vector_db_2/db_query.png" alt="db_query" style="max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); background: #ffffff; padding: 10px;">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图1: 向量集合 vs 查询向量</p>
+                </div>
+
+                <h2>向量索引</h2>
+                <p>为了支撑高效的向量搜索，需要有合适的向量索引，目的是减少向量集合中需要与查询 q 计算相似度的向量数量。常见的向量索引可归纳为以下几大类。</p>
+
+                <h3>hash-based</h3>
+                <p>通过设计 hash function，将向量集合切分成不同的子集。在写数据时，每个向量通过 hash function，映射到某个 bucket，然后将数据写入到该 bucket；同样地，在搜索时，通过 hash function 找到向量所在的 bucket，然后将查询与该 bucket 中的全部向量进行对比，从而缩小需要计算相似度的向量数量。</p>
+                <p><strong>LSH</strong>：LSH（Locality Sensitive Hashing）的核心思想是通过设计合适的 hash function，尽量提高 hash 冲突，使得相似的向量以高概率被映射到相同的 bucket 中，从而将相似的向量 group 在一起（跟传统的 hash 映射尽量减少冲突不一样）。</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/vector_db_2/LSH.png" alt="LSH" style="max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); background: #ffffff; padding: 10px;">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图2: LSH</p>
+                </div>
+
+                <h3>tree-based</h3>
+                <p>将向量集合拆分成搜索树（search tree）。搜索时，通过遍历树结构来查找相似的向量。跟 hash-based 的目标类似，通过将数据拆分成多个不同的子集，从而减少计算向量相似度的次数。</p>
+                <p><strong>ANNOY</strong>：ANNOY（Approximate Nearest Neighbors Oh Yeah）使用二叉搜索树作为核心数据结构，原理是反复对向量空间进行切分，直到每个子集中包含的向量数量不超过k，并且仅在一小部分子集中进行最近邻的搜索。</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/vector_db_2/ANNOY.png" alt="ANNOY" style="max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); background: #ffffff; padding: 10px;">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图3: ANNOY</p>
+                </div>
+
+                <h3>cluster-based</h3>
+                <p>通过机器学习等方法将向量集合分成多个cluster，每个 cluster 有一个 centroid（中心）。</p>
+                <p><strong>IVF</strong>：IVF（Inverted File index）的核心是使用K-means算法将向量集合划分成多个cluster。每个 cluster 中的向量，与所在 cluster 对应的 centroid 的距离比其它 cluster 的 centroid 近。</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/vector_db_2/IVF.png" alt="IVF" style="max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); background: #ffffff; padding: 10px;">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图4: IVF</p>
+                </div>
+
+                <h3>graph-based</h3>
+                <p>通过构建图结构，将距离相近的向量通过「边」连接起来。</p>
+                <p><strong>HNSW</strong>：HNSW（Hierarchical Navigable Small Worlds）构建分层的图结构，即每一层对应一个图结构，层数越高，向量数量越少，连接越稀疏，最底层包含全部向量集合。通过这种方式，实现顶层图用于快速定位，底层图进行精确搜索。</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/vector_db_2/HNSW.png" alt="HNSW" style="max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); background: #ffffff; padding: 10px;">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图5: HNSW</p>
+                </div>
+
+                <p>为了提高搜索的性能，通常将索引加载进内存，这时候，对内存的要求会比较高，所以，向量量化技术（将索引编码成size更小的数据结构），例如SQ、PQ和BQ也常常被使用。除此之外，也会引入SIMD、GPU来加速查询。</p>
+                <p>为了提高搜索结果的准确度，混合搜索也会派上用场，例如，结合关键词搜索、标量搜索或多个向量的搜索。</p>
+
+                <h2>存储技术</h2>
+
+                <h3>分布式存储</h3>
+                <p><strong>sharding（分片）</strong>：将向量数据库的数据分布在多个机器或集群上。在分布式系统中，通过 sharding，将数据切分成更小的数据单元（根据一定的规则，hash、range 或 geographic）并分散到多个节点，可提升并行处理的能力，获得良好的扩展性、load balancing 和容错。</p>
+                <ul>
+                    <li><strong>range-based sharding</strong>：根据有序的 key，将向量数据划分为不重叠的 key interval 或 range，从而将数据划分到不同的 shard 中，例如时间范围、ID范围</li>
+                    <li><strong>hash-based sharding</strong>：根据某一列或多列的 hash 值进行分 shard</li>
+                    <li><strong>geographic sharding</strong>：根据地理属性进行分 shard，例如 region、location。通过将数据存储在物理上更靠近用户的 shard 中，可以降低跨区域的网络延迟，并有助于遵守数据主权法规</li>
+                </ul>
+
+                <p><strong>partitioning（分区）</strong>：采用基于 range、list、K-means 或 hash 分区策略，优化数据局部性，目的是提高并发处理的能力、提高查询性能。</p>
+                <ul>
+                    <li><strong>range-based partitioning</strong>：根据有序的 key，将数据划分为不重叠的 key range</li>
+                    <li><strong>list-based partitioning</strong>：根据一个列或多个列的值进行划分</li>
+                    <li><strong>k-means partitioning</strong>：将数据分到 k 个 cluster 中，在同一个 cluster 的向量有相似性。对于大数据集，计算开销会比较大，特别是频繁更新需要 re-clustering 时</li>
+                    <li><strong>hash-based partitioning</strong>：按照 hash 进行分区</li>
+                </ul>
+                <p><strong>shard 和 partition 的区别</strong>：shard 表示数据如何分布在多个节点上（水平扩展）；partition 表示数据如何在一台节点上组织（单个 shard 的数据如何组织，以便高效访问）</p>
+
+                <h3>通过 caching 加速访问</h3>
+                <p>将经常访问或最近使用的数据保存在内存中。传统数据库通常引入key-value store，例如 redis 做加速，然而不适用于向量数据库，因为向量数据是高维的，不同查询几乎不可能复用相同的向量数据。</p>
+                <p>以下是四种常见的 caching 方式：</p>
+                <ul>
+                    <li><strong>FIFO（first-in first-out）</strong>：cache 淘汰策略，当 cache 满了之后，淘汰最早被保存的 cache 数据</li>
+                    <li><strong>LRU（least recently used）</strong>：淘汰最少使用的数据</li>
+                    <li><strong>MRU（most recently used）</strong>：淘汰最近访问的数据，保留未来可能需要的、最近较少使用的</li>
+                    <li><strong>LFU（least frequently used）</strong>：淘汰最不频繁访问的数据，适用于有稳定和长期热点的数据 pattern</li>
+                </ul>
+
+                <h3>通过 replication 实现高可用</h3>
+                <p>通过将数据复制、保存多副本在不同的节点或集群中，来实现高可用。</p>
+                <p>以下是三种常见的复制方法：</p>
+                <ul>
+                    <li><strong>leader-follower replication</strong>：一个 leader，其它都是 follower，只有 leader 可以处理写请求，保障强一致性、简化对冲突的解决，但是引入了 leader 的可用性问题，需要处理 leader 的容错问题</li>
+                    <li><strong>multi-leader replication</strong>：多个 leader，可以并发处理写请求</li>
+                    <li><strong>leaderless replication</strong>：不区分 leader 和 follower，每个节点都可以处理读和写，可以避免单点失败，提高扩展性和可靠性，但是会带来一致性问题，需要协调机制来处理冲突</li>
+                </ul>
+
+                <h2>小结</h2>
+                <p>本文主要从查询处理、向量索引和存储等角度介绍向量数据库中使用的技术。由于文章篇幅有限，对于各项内容只是简单描述，我认为其中的任意一项技术或算法，都值得单独一篇文章来阐述，后续如果有机会，将会挑选个人感兴趣的 topic 进行深入分享。</p>
+                
+                <h3>参考</h3>
+                <ul>
+                    <li>[1] Survey of Vector Database Management Systems：<a href="https://arxiv.org/abs/2310.14021" target="_blank">https://arxiv.org/abs/2310.14021</a></li>
+                    <li>[2] A Comprehensive Survey on Vector Database: Storage and Retrieval Technique, Challenge：<a href="https://arxiv.org/abs/2310.11703" target="_blank">https://arxiv.org/abs/2310.11703</a></li>
+                </ul>
+            </article>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>&copy; Maihj. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        function createBinaryRain() {
+            const rainContainer = document.getElementById('binary-rain');
+            const columnCount = 30;
+            for (let i = 0; i < columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-column';
+                column.style.left = (i / columnCount * 100) + '%';
+                column.style.setProperty('--duration', (Math.random() * 10 + 15) + 's');
+                column.style.animationDelay = Math.random() * 15 + 's';
+                let binaryString = '';
+                const length = Math.floor(Math.random() * 30 + 20);
+                for (let j = 0; j < length; j++) {
+                    binaryString += Math.random() > 0.5 ? '1' : '0';
+                }
+                column.textContent = binaryString;
+                rainContainer.appendChild(column);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createBinaryRain();
+        });
+    </script>
+</body>
+</html>
