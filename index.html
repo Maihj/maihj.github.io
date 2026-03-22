@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 星空背景 -->
+    <div class="starfield"></div>
+    <div class="stars" id="stars"></div>
+    
+    <!-- 二进制雨效果 -->
+    <div class="binary-rain" id="binary-rain"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">&lt;/Start&gt;</a>
+        <ul class="nav-links">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="#articles">文章</a></li>
+            <li><a href="about.html">关于</a></li>
+            <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+    
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 英雄区 -->
+        <section class="hero">
+            <h1>脑洞一光年</h1>
+            <p>如果一个人有脑洞，那么就有机会创造出无限可能。</p>
+            <p>如果一定要给它一个深度，我希望是一光年。</p>
+            <p class="tagline">// while(alive) { hope(); faith(); love(); }</p>
+        </section>
+        
+        <!-- 文章列表 -->
+        <section class="articles-section" id="articles">
+            <h2 class="section-title">最新文章</h2>
+            <div class="articles-grid">
+                <!-- 文章1 -->
+                <article class="article-card">
+                    <h3><a href="articles/article1.html">NSW 和 HNSW：基于小世界图的高效近邻搜索</a></h3>
+                    <p class="summary">从小世界现象到向量搜索算法，深入剖析 NSW 和 HNSW 的核心原理、索引构建与搜索算法设计，理解为何 HNSW 成为主流向量数据库的首选。</p>
+                    <div class="meta">
+                        <span class="date">2026-03-21</span>
+                        <a href="articles/article1.html" class="read-more">阅读更多 →</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>&copy; Maihj. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        // 生成随机星星
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // 生成二进制雨
+        function createBinaryRain() {
+            const rainContainer = document.getElementById('binary-rain');
+            const columnCount = 30;
+            
+            for (let i = 0; i < columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-column';
+                column.style.left = (i / columnCount * 100) + '%';
+                column.style.setProperty('--duration', (Math.random() * 10 + 15) + 's');
+                column.style.animationDelay = Math.random() * 15 + 's';
+                
+                // 生成随机二进制字符串
+                let binaryString = '';
+                const length = Math.floor(Math.random() * 30 + 20);
+                for (let j = 0; j < length; j++) {
+                    binaryString += Math.random() > 0.5 ? '1' : '0';
+                }
+                column.textContent = binaryString;
+                
+                rainContainer.appendChild(column);
+            }
+        }
+        
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createBinaryRain();
+        });
+    </script>
+</body>
+</html>
