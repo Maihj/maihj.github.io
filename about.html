@@ -1,16 +1,16 @@
 <!--
   Copyright (C) 2026 Maihj
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Affero General Public License for more details.
-  
+
   You should have received a copy of the GNU Affero General Public License
   along with this program. If not, see <https://www.gnu.org/licenses/>.
 -->
@@ -21,12 +21,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
 </head>
 <body>
     <div class="starfield"></div>
     <div class="stars" id="stars"></div>
     <div class="binary-rain" id="binary-rain"></div>
-    
+
     <nav class="navbar">
         <a href="index.html" class="logo">&lt;/Start&gt;</a>
         <ul class="nav-links">
@@ -36,7 +44,7 @@
             <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
         </ul>
     </nav>
-    
+
     <main class="main-content">
         <div class="about-page">
             <div class="mystery-container">
@@ -45,11 +53,11 @@
             </div>
         </div>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; Maihj. All rights reserved.</p>
     </footer>
-    
+
     <script>
         function createStars() {
             const starsContainer = document.getElementById('stars');

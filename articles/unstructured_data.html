@@ -1,16 +1,16 @@
 <!--
   Copyright (C) 2026 Maihj
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Affero General Public License for more details.
-  
+
   You should have received a copy of the GNU Affero General Public License
   along with this program. If not, see <https://www.gnu.org/licenses/>.
 -->
@@ -21,12 +21,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>什么是非结构化数据</title>
     <link rel="stylesheet" href="../css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
 </head>
 <body>
     <div class="starfield"></div>
     <div class="stars" id="stars"></div>
     <div class="binary-rain" id="binary-rain"></div>
-    
+
     <nav class="navbar">
         <a href="../index.html" class="logo">&lt;/Start&gt;</a>
         <ul class="nav-links">
@@ -36,7 +44,7 @@
             <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
         </ul>
     </nav>
-    
+
     <main class="main-content">
         <div class="article-page">
             <a href="../index.html" class="back-btn">← 返回首页</a>
@@ -44,7 +52,7 @@
                 <h1>什么是非结构化数据</h1>
                 <p class="article-meta">发布于 2026-03-21</p>
             </header>
-            
+
             <article class="article-content">
                 <h2>背景</h2>
                 <p>根据 IDC（International Data Corporation，国际数据公司）的预测，全球数据量 Global DataSphere 到 2028 年将增长至 393.8 ZB，其中，<strong>非结构化数据占比 82.3%</strong>，是最主要的数据形式。</p>
@@ -56,7 +64,7 @@
                     <li>通过关系模型来存储</li>
                 </ul>
                 <p>例如，图片库中每张图片的基本信息：图片id、类型、大小、创建时间。在表格中，每一行数据代表一张图片的信息。</p>
-                
+
                 <table style="width:80%; border-collapse: collapse; margin: 20px 0; background: rgba(26, 26, 58, 0.6); border-radius: 10px; overflow: hidden;">
                     <thead>
                         <tr style="background: rgba(0, 255, 136, 0.2);">
@@ -87,12 +95,12 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <p>结构化数据通常存储于关系型数据库，例如 <strong>MySQL</strong> 和 <strong>PostgreSQL</strong>。</p>
 
                 <h2>半结构化数据</h2>
                 <p>半结构化数据不拘泥于传统的基于表的模型，半结构化数据通常带有 key 或 标记，可用于描述和索引数据，例如 JSON、XML格式。回到上面关于图片的例子，我们可以将其扩展为半结构化 JSON 格式，每张图片可以保存不同的信息。</p>
-                
+
 <pre><code>{
   图片id: 0001
   类型: JPEG
@@ -119,7 +127,7 @@
                 <h2>非结构化数据</h2>
                 <p>不同于结构化数据和半结构化数据，非结构化数据没有固定的格式。</p>
                 <p>再次回到上面关于图片的例子，<strong>图片本身</strong>，即非结构化数据。当然，除了图片，还有很多不同类型的非结构化数据，例如视频和音频等。</p>
-                
+
                 <div style="text-align: center; margin: 30px 0;">
                     <img src="../images/unstructured_data/picture.png" alt="非结构化数据-图片" style="max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图1: 非结构化数据-图片</p>
@@ -130,9 +138,9 @@
                     <li>对于相似的图片，可能对应的二进制字符串差异很大，如何保证在搜索时，能够返回正确的结果呢？</li>
                     <li>当图片库有大量图片时，如何能够高效地进行搜索呢？</li>
                 </ul>
-                
+
                 <p>幸运的是，通过机器学习（深度学习），结合大数据和深度神经网络，目前已经有多种模型，可以将非结构化数据转化成 <strong>embedding</strong>，即非结构化数据的向量化表示。</p>
-                
+
 <pre><code>[0.1322, 0.7632, 0.6518, ..., 0.8128, 0.2621, 0.9557]</code></pre>
 
                 <p>所以，为了提高非结构化数据的搜索准确度和效率，通常会将其转化成向量，保存在<strong>向量数据库</strong>（例如 Milvus）中，对于非结构化数据的搜索，也转变为向量的搜索，即通过计算向量距离，来评估非结构化数据之间的相似度。</p>
@@ -171,11 +179,11 @@
             </article>
         </div>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; Maihj. All rights reserved.</p>
     </footer>
-    
+
     <script>
         function createStars() {
             const starsContainer = document.getElementById('stars');
@@ -192,7 +200,7 @@
                 starsContainer.appendChild(star);
             }
         }
-        
+
         function createBinaryRain() {
             const rainContainer = document.getElementById('binary-rain');
             const columnCount = 30;
@@ -211,7 +219,7 @@
                 rainContainer.appendChild(column);
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
             createBinaryRain();

@@ -1,16 +1,16 @@
 <!--
   Copyright (C) 2026 Maihj
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Affero General Public License for more details.
-  
+
   You should have received a copy of the GNU Affero General Public License
   along with this program. If not, see <https://www.gnu.org/licenses/>.
 -->
@@ -21,12 +21,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>什么是向量数据库（二）</title>
     <link rel="stylesheet" href="../css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
 </head>
 <body>
     <div class="starfield"></div>
     <div class="stars" id="stars"></div>
     <div class="binary-rain" id="binary-rain"></div>
-    
+
     <nav class="navbar">
         <a href="../index.html" class="logo">&lt;/Start&gt;</a>
         <ul class="nav-links">
@@ -36,7 +44,7 @@
             <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
         </ul>
     </nav>
-    
+
     <main class="main-content">
         <div class="article-page">
             <a href="../index.html" class="back-btn">← 返回首页</a>
@@ -44,7 +52,7 @@
                 <h1>什么是向量数据库（二）</h1>
                 <p class="article-meta">发布于 2026-03-21</p>
             </header>
-            
+
             <article class="article-content">
                 <h2>回顾</h2>
                 <p>在文章「什么是向量数据库（一）」中已经提过，传统数据库无法很好的支撑：</p>
@@ -100,11 +108,11 @@
                 <p>下面将从查询处理、向量索引和存储技术上分别进行介绍。</p>
 
                 <h2>查询处理</h2>
-                
+
                 <h3>通过向量距离衡量相似度</h3>
                 <p>通过计算两个向量之间的距离来评估向量相似度，下面是几种常见的计算方式。</p>
                 <p>给定两个向量 <code>a</code> 和 <code>b</code>，维度都是 <code>D</code>：</p>
-                
+
                 <p><strong>汉明距离（hamming distance）：</strong></p>
                 <ul>
                     <li>计算公式：</li>
@@ -122,7 +130,7 @@
                     <li>相似度范围：[0, D]</li>
                     <li>计算向量 a 和 b 在不同维度上值不同的数量，通常用于二进制向量；<strong>值越小，向量越相似</strong></li>
                 </ul>
-                
+
                 <p><strong>余弦相似度（cosine similarity）：</strong></p>
                 <ul>
                     <li>计算公式：</li>
@@ -138,7 +146,7 @@
                     <li>相似度范围：[-1, 1]</li>
                     <li>适用于关注向量的方向，而不是长度；<strong>值越大，向量越相似</strong></li>
                 </ul>
-                
+
                 <p><strong>欧氏距离（euclidean distance）：</strong></p>
                 <ul>
                     <li>计算公式：</li>
@@ -150,7 +158,7 @@
                     <li>相似度范围：[0, ∞)</li>
                     <li>适用于关注向量的长度，而不是方向；<strong>值越小，向量越相似</strong></li>
                 </ul>
-                
+
                 <p><strong>内积（inner product）：</strong></p>
                 <ul>
                     <li>计算公式：</li>
@@ -168,7 +176,7 @@
                     <li>相似度范围：[-1, 1]</li>
                     <li>适用于关注向量的方向和长度；<strong>值越大，向量越相似</strong></li>
                 </ul>
-                
+
                 <p>NOTE：维度不相同的两个向量，无法计算相似度</p>
 
                 <h3>增、删、改、查</h3>
@@ -177,9 +185,9 @@
                     <li><strong>embedding model 在向量数据库之外</strong>：向量数据库直接保存向量数据；由于向量的 size 比较庞大，所以通常在插入向量时，加上一个用户定义的 id，方便后续修改和删除该向量</li>
                     <li><strong>embedding model 在向量数据库之内</strong>（包括直接调用外部模型和内置的预训练模型）：对于用户来说，存储的是实际数据本身（例如文本和图片），而向量是被隐藏存储的一部分</li>
                 </ul>
-                
+
                 <p>对于查询 q，本质上是在向量集合中，找到与 q 最相似的 k 个向量（k ≥ 1）。假设向量集合中有 N 个向量，随着 N 逐渐变大，计算最优的近似向量并不现实，时间复杂度达到 O(N * D)，D 是向量的维度，所以，为了提高性能，设计了 ANN 算法，一个好的 ANN 算法要在<strong>速度快</strong>和<strong>找得准</strong>之间找到平衡点。</p>
-                
+
                 <p>衡量向量的准确性通常通过 precision 和 recall：</p>
                 <ul>
                     <li><strong>precision</strong>：c / k'，返回的结果中有多少是正确的</li>
@@ -274,7 +282,7 @@
 
                 <h2>小结</h2>
                 <p>本文主要从查询处理、向量索引和存储等角度介绍向量数据库中使用的技术。由于文章篇幅有限，对于各项内容只是简单描述，我认为其中的任意一项技术或算法，都值得单独一篇文章来阐述，后续如果有机会，将会挑选个人感兴趣的 topic 进行深入分享。</p>
-                
+
                 <h3>参考</h3>
                 <ul>
                     <li>[1] Survey of Vector Database Management Systems：<a href="https://arxiv.org/abs/2310.14021" target="_blank">https://arxiv.org/abs/2310.14021</a></li>
@@ -283,11 +291,11 @@
             </article>
         </div>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; Maihj. All rights reserved.</p>
     </footer>
-    
+
     <script>
         function createStars() {
             const starsContainer = document.getElementById('stars');
@@ -304,7 +312,7 @@
                 starsContainer.appendChild(star);
             }
         }
-        
+
         function createBinaryRain() {
             const rainContainer = document.getElementById('binary-rain');
             const columnCount = 30;
@@ -323,7 +331,7 @@
                 rainContainer.appendChild(column);
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
             createBinaryRain();

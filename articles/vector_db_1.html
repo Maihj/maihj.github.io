@@ -1,16 +1,16 @@
 <!--
   Copyright (C) 2026 Maihj
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Affero General Public License for more details.
-  
+
   You should have received a copy of the GNU Affero General Public License
   along with this program. If not, see <https://www.gnu.org/licenses/>.
 -->
@@ -21,12 +21,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>什么是向量数据库（一）</title>
     <link rel="stylesheet" href="../css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
 </head>
 <body>
     <div class="starfield"></div>
     <div class="stars" id="stars"></div>
     <div class="binary-rain" id="binary-rain"></div>
-    
+
     <nav class="navbar">
         <a href="../index.html" class="logo">&lt;/Start&gt;</a>
         <ul class="nav-links">
@@ -36,7 +44,7 @@
             <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
         </ul>
     </nav>
-    
+
     <main class="main-content">
         <div class="article-page">
             <a href="../index.html" class="back-btn">← 返回首页</a>
@@ -44,7 +52,7 @@
                 <h1>什么是向量数据库（一）</h1>
                 <p class="article-meta">发布于 2026-03-21</p>
             </header>
-            
+
             <article class="article-content">
                 <h2>传统关系型数据库如何保存非结构化数据</h2>
                 <p>想象一下，我们有一张关于「日出」的图片，如下所示，应该如何保存在传统的关系型数据库中？</p>
@@ -59,9 +67,9 @@
                     <li><strong>检索低效性</strong>：直接通过二进制数据查询需要逐条比对，计算复杂度为 O(N * M)（N、M 分别代表数据总条数和数据大小），在海量数据下难以实现高效检索。</li>
                     <li><strong>语义缺失</strong>：二进制数据本身不包含语义信息，无法通过内容关联性进行搜索，例如无法直接回答「哪张图片包含海上的日出？」。</li>
                 </ul>
-                
+
                 <p>为解决这些问题，通常需依赖元数据和标签，把这些数据同时保存在数据库中：</p>
-                
+
                 <div style="text-align: center; margin: 30px 0;">
                     <img src="../images/vector_db_1/db.png" alt="db" style="max-width: 50%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); background: #ffffff; padding: 10px;">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图2: 元数据和标签保存在数据库中</p>
@@ -71,7 +79,7 @@
                     <li><strong>元数据</strong>：记录图片的基本属性（例如创建时间、图片大小），但元数据通常缺乏上下文信息，无法描述内容细节。</li>
                     <li><strong>标签</strong>：通过人工或自动化标注（例如图像分类算法）添加语义标签（例如「日出」、「沙滩」），但标签可能存在主观性、覆盖不全或歧义等问题。</li>
                 </ul>
-                
+
                 <p>举一个经常被引用到的例子：假如要查询「苹果」，如何能够准确区分是「水果」苹果，还是「手机」苹果？</p>
 
                 <div style="text-align: center; margin: 30px 0;">
@@ -82,7 +90,7 @@
                 <p>以上问题不仅仅针对图片这一类型的数据，对于非结构化数据，均存在上述问题。</p>
 
                 <h2>embedding：跨越语义与数据之间的鸿沟</h2>
-                
+
                 <h3>向量 vs embedding</h3>
                 <ul>
                     <li><strong>向量（vector）</strong>：在数学中，向量指的是既有「大小」又有「方向」的量</li>
@@ -106,7 +114,7 @@
                     <li>管理大规模向量</li>
                     <li>除了向量数据本身，向量数据库还会存储（与向量有关的）元数据。特别的，与大模型结合起来，支持多模数据的搜索，例如文搜图、图搜文等。</li>
                 </ul>
-                
+
                 <p><strong>一些题外话：现实世界中会存在大量的向量吗？</strong></p>
                 <p>当然。举个例子，假设每个人的身份证图片对应一个embedding向量（每个向量1024维），全国大概有14亿人，那么，就有14亿个向量，这是一个非常庞大的数据，如何在这14亿个向量中实现高效搜索，是一个极具挑战的事情。</p>
 
@@ -138,9 +146,9 @@
                     <li><strong>查询层</strong>：处理查询、决定执行策略</li>
                     <li><strong>服务层</strong>：管理客户端的连接、处理请求的路由、提供监控、日志、安全和多租户等功能</li>
                 </ul>
-                
+
                 <p>工作流程如下所示：</p>
-                
+
                 <div style="text-align: center; margin: 30px 0;">
                     <img src="../images/vector_db_1/workflow.png" alt="workflow" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3); background: #ffffff; padding: 10px;">
                     <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图4: 向量数据库工作流程</p>
@@ -170,11 +178,11 @@
             </article>
         </div>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; Maihj. All rights reserved.</p>
     </footer>
-    
+
     <script>
         function createStars() {
             const starsContainer = document.getElementById('stars');
@@ -191,7 +199,7 @@
                 starsContainer.appendChild(star);
             }
         }
-        
+
         function createBinaryRain() {
             const rainContainer = document.getElementById('binary-rain');
             const columnCount = 30;
@@ -210,7 +218,7 @@
                 rainContainer.appendChild(column);
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
             createBinaryRain();

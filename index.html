@@ -1,16 +1,16 @@
 <!--
   Copyright (C) 2026 Maihj
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Affero General Public License for more details.
-  
+
   You should have received a copy of the GNU Affero General Public License
   along with this program. If not, see <https://www.gnu.org/licenses/>.
 -->
@@ -21,16 +21,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>脑洞一光年</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
 </head>
 <body>
-    <!-- 星空背景 -->
+    <!-- Starfield Background -->
     <div class="starfield"></div>
     <div class="stars" id="stars"></div>
-    
-    <!-- 二进制雨效果 -->
+
+    <!-- Binary Rain Effect -->
     <div class="binary-rain" id="binary-rain"></div>
-    
-    <!-- 导航栏 -->
+
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <a href="index.html" class="logo">&lt;/Start&gt;</a>
         <ul class="nav-links">
@@ -40,18 +48,18 @@
             <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
         </ul>
     </nav>
-    
-    <!-- 主内容 -->
+
+    <!-- Main Content -->
     <main class="main-content">
-        <!-- 英雄区 -->
+        <!-- Hero Section -->
         <section class="hero">
             <h1>脑洞一光年</h1>
             <p>如果一个人有脑洞，那么就有机会创造出无限可能。</p>
             <p>如果一定要给它一个深度，我希望是一光年。</p>
             <p class="tagline">// while(alive) { hope(); faith(); love(); }</p>
         </section>
-        
-        <!-- 文章列表 -->
+
+        <!-- Article List -->
         <section class="articles-section" id="articles">
             <h2 class="section-title">最新文章</h2>
             <div class="articles-grid">
@@ -73,7 +81,7 @@
                         <a href="articles/vector_db_2.html" class="read-more">阅读更多 →</a>
                     </div>
                 </article>
-                
+
                 <!-- 什么是向量数据库（一） -->
                 <article class="article-card">
                     <h3><a href="articles/vector_db_1.html">什么是向量数据库（一）</a></h3>
@@ -83,7 +91,7 @@
                         <a href="articles/vector_db_1.html" class="read-more">阅读更多 →</a>
                     </div>
                 </article>
-                
+
                 <!-- 什么是非结构化数据 -->
                 <article class="article-card">
                     <h3><a href="articles/unstructured_data.html">什么是非结构化数据</a></h3>
@@ -96,18 +104,18 @@
             </div>
         </section>
     </main>
-    
-    <!-- 页脚 -->
+
+    <!-- Footer -->
     <footer class="footer">
         <p>&copy; Maihj. All rights reserved.</p>
     </footer>
-    
+
     <script>
-        // 生成随机星星
+        // Generate Random Stars
         function createStars() {
             const starsContainer = document.getElementById('stars');
             const starCount = 200;
-            
+
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
@@ -120,32 +128,31 @@
                 starsContainer.appendChild(star);
             }
         }
-        
-        // 生成二进制雨
+
+        // Generate Binary Rain
         function createBinaryRain() {
             const rainContainer = document.getElementById('binary-rain');
             const columnCount = 30;
-            
+
             for (let i = 0; i < columnCount; i++) {
                 const column = document.createElement('div');
                 column.className = 'binary-column';
                 column.style.left = (i / columnCount * 100) + '%';
                 column.style.setProperty('--duration', (Math.random() * 10 + 15) + 's');
                 column.style.animationDelay = Math.random() * 15 + 's';
-                
-                // 生成随机二进制字符串
+
                 let binaryString = '';
                 const length = Math.floor(Math.random() * 30 + 20);
                 for (let j = 0; j < length; j++) {
                     binaryString += Math.random() > 0.5 ? '1' : '0';
                 }
                 column.textContent = binaryString;
-                
+
                 rainContainer.appendChild(column);
             }
         }
-        
-        // 页面加载时执行
+
+        // Page Load Events
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
             createBinaryRain();

@@ -1,16 +1,16 @@
 <!--
   Copyright (C) 2026 Maihj
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Affero General Public License for more details.
-  
+
   You should have received a copy of the GNU Affero General Public License
   along with this program. If not, see <https://www.gnu.org/licenses/>.
 -->
@@ -21,12 +21,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - 页面未找到</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
 </head>
 <body>
     <div class="starfield"></div>
     <div class="stars" id="stars"></div>
     <div class="binary-rain" id="binary-rain"></div>
-    
+
     <nav class="navbar">
         <a href="index.html" class="logo">&lt;/Start&gt;</a>
         <ul class="nav-links">
@@ -35,7 +43,7 @@
             <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
         </ul>
     </nav>
-    
+
     <main class="main-content">
         <section class="hero" style="min-height: 70vh;">
             <h1 style="font-size: 8rem; margin-bottom: 30px;">404</h1>
@@ -44,11 +52,11 @@
             <a href="index.html" style="display: inline-block; margin-top: 40px; padding: 15px 30px; background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%); color: #0a0a1a; text-decoration: none; border-radius: 30px; font-weight: bold; transition: all 0.3s ease;">返回首页</a>
         </section>
     </main>
-    
+
     <footer class="footer">
         <p>&copy; Maihj. All rights reserved.</p>
     </footer>
-    
+
     <script>
         function createStars() {
             const starsContainer = document.getElementById('stars');
