@@ -1,0 +1,221 @@
+<!--
+  Copyright (C) 2026 Maihj
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program. If not, see <https://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初探DuckLake：用数据库重构数据湖元数据管理</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
+</head>
+<body>
+    <div class="starfield"></div>
+    <div class="stars" id="stars"></div>
+    <div class="binary-rain" id="binary-rain"></div>
+
+    <nav class="navbar">
+        <a href="../index.html" class="logo">&lt;/Start&gt;</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">首页</a></li>
+            <li><a href="../index.html#articles">文章</a></li>
+            <li><a href="../about.html">关于</a></li>
+            <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="article-page">
+            <a href="../index.html" class="back-btn">← 返回首页</a>
+            <header class="article-header">
+                <h1>初探DuckLake：用数据库重构数据湖元数据管理</h1>
+                <p class="article-meta">发布于 2026-03-21</p>
+            </header>
+
+            <article class="article-content">
+                <p>DuckDB最近新推出了<strong>DuckLake</strong>，核心思想是使用数据库来管理文件的元数据。DuckLake的架构非常直观：就是一些<strong>Parquet文件 + 一个SQL数据库</strong>（用来存放表的元数据）。</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/ducklake/ducklake.png" alt="ducklake" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图1：DuckLake 架构</p>
+                </div>
+
+                <h3>选择Parquet的理由</h3>
+                <ul>
+                    <li>开放格式，不依赖语言、引擎</li>
+                    <li>列式存储、高压缩率、性能好</li>
+                    <li>数据文件自描述</li>
+                </ul>
+
+                <h3>选择数据库管理元数据的理由</h3>
+                <ul>
+                    <li>借助数据库的优势来保障ACID</li>
+                </ul>
+
+                <p>使用关系型数据库管理数据湖中的数据，是DuckLake本次最核心的观点。接下来，重点看下DuckLake这样做的理由。</p>
+
+                <h2>问题引入</h2>
+                <p>要从数据湖表格式<strong>Iceberg</strong>说起。Iceberg架构分为三层：</p>
+                <ul>
+                    <li><strong>data layer</strong>：存放数据文件</li>
+                    <li><strong>metadata layer</strong>：对数据文件的索引</li>
+                    <li><strong>catalog</strong>：管理多张表</li>
+                </ul>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/ducklake/iceberg.png" alt="iceberg" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图2：Iceberg 架构</p>
+                </div>
+
+                <p>Iceberg每次对表的修改，commit后就会新增一个snapshot，对应着一个新的manifest list以及它所对应的一系列manifest files（两层索引），还会生成一个metadata.json（包含完整的历史），如果表的数据更新比较频繁，那么manifest list、manifest file、metadata.json也会逐渐增多，如何维护当前最新的版本，也变得困难；并且，两层manifest索引和json文件只是对应着单表，现实业务中用户还希望能同时管理多张表。</p>
+
+                <p>Iceberg catalog层的出现就是为了解决这些问题。Iceberg在metadata之上，增加一层catalog service，连接数据库，用来管理所有table folder names，同时，记录着当前最新的版本号，通过这个版本号定位到最新版本对应的metadata.json，找到对应的manifest list和manifest file，最终找到数据文件；同时catalog维护Iceberg中多张表的信息，本质上，是<strong>借助数据库的事务来满足ACID</strong>。</p>
+
+                <p>Iceberg的设计初衷是避免使用数据库，所以煞费苦心地将读取和更新表所需的全部信息编码进了对象存储上的文件中，力求摆脱数据库的束缚。然而，最终还是不得不妥协，引入数据库作为catalog的一部分以确保一致性。hmm，<strong>back to database...</strong></p>
+
+                <p>而DuckLake的目的，是将所有元数据结构（包括目录信息和表级数据）都移入一个SQL数据库中进行管理，用数据库代替Iceberg的两层manifest索引文件、json文件和catalog service。归根结底，是让元数据管理的任务交给发展了50多年的关系型数据库。具体使用哪种SQL数据库由用户自行决定，唯一的要求是系统必须支持ACID操作和主键，并具备标准的SQL支持。</p>
+
+                <h2>DuckLake设计原则</h2>
+
+                <h3>Simplicity</h3>
+                <p>只包含了元数据（数据库）、数据（S3/NAS/local disk/…，用于存Parquet）</p>
+
+                <h3>Scalability</h3>
+                <ul>
+                    <li><strong>数据</strong>：数据在对象存储中，拥有无限扩展的能力</li>
+                    <li><strong>元数据</strong>：可以对接mysql、postgresql、sqlite等数据库，依赖数据库提供的扩展能力（元数据的数据量比实际数据小太多了，根据DuckDB作者的说法，相差大约5个数量级）</li>
+                    <li><strong>计算</strong>：DuckDB是单进程引擎，它的执行模型在多线程下可以获得良好的scale-up能力，scale-out需要依赖像Ray这类的分布式架构</li>
+                </ul>
+
+                <h3>Speed</h3>
+                <p>在读数据上，Iceberg需要：</p>
+                <ol>
+                    <li>访问metadata service获取版本号</li>
+                    <li>读json</li>
+                    <li>读manifest list</li>
+                    <li>读manifest file</li>
+                    <li>读Parquet</li>
+                </ol>
+
+                <p>在写数据上，修改iceberg table（一次commit），需要：</p>
+                <ol>
+                    <li>写parquet file</li>
+                    <li>写两层manifest</li>
+                    <li>写json</li>
+                    <li>更新database</li>
+                </ol>
+
+                <p>而<strong>DuckLake</strong>，只需<strong>读/写Parquet + 读/写database</strong>；除此之外，对于小修改、小文件的处理，DuckLake采用<strong>data inlining</strong>的方式，例如行数很少的修改，可以先写database，因为database有全部的信息，所以数据是一致的，并且实时可见。</p>
+
+                <h2>总结</h2>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: rgba(26, 26, 58, 0.6); border-radius: 10px; overflow: hidden;">
+                    <thead>
+                        <tr style="background: rgba(0, 255, 136, 0.2);">
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">特性</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); border-right: 1px solid rgba(0, 255, 136, 0.1);">Iceberg</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 1px solid rgba(0, 255, 136, 0.1); ">DuckLake</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">元数据管理</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">两层manifest + json + catalog service</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">SQL数据库</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">读取路径</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">多层文件访问</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">数据库 + Parquet</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">ACID保障</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">依赖catalog数据库</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">直接依赖SQL数据库</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">小文件处理</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); border-right: 1px solid rgba(255,255,255,0.1);">需要compaction</td>
+                            <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">Data inlining</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>更多关于DuckLake设计原则的阐述可以查看DuckDB官网文档。后续将会继续深入探讨DuckLake，看看它的具体实现。</p>
+
+                <h2>参考</h2>
+                <ul>
+                    <li><a href="https://duckdb.org/2025/05/27/ducklake.html" target="_blank">https://duckdb.org/2025/05/27/ducklake.html</a></li>
+                    <li><a href="https://lakefs.io/blog/iceberg-catalog/" target="_blank">https://lakefs.io/blog/iceberg-catalog/</a></li>
+                </ul>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Maihj. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function createBinaryRain() {
+            const rainContainer = document.getElementById('binary-rain');
+            const columnCount = 30;
+            for (let i = 0; i < columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-column';
+                column.style.left = (i / columnCount * 100) + '%';
+                column.style.setProperty('--duration', (Math.random() * 10 + 15) + 's');
+                column.style.animationDelay = Math.random() * 15 + 's';
+                let binaryString = '';
+                const length = Math.floor(Math.random() * 30 + 20);
+                for (let j = 0; j < length; j++) {
+                    binaryString += Math.random() > 0.5 ? '1' : '0';
+                }
+                column.textContent = binaryString;
+                rainContainer.appendChild(column);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createBinaryRain();
+        });
+    </script>
+</body>
+</html>

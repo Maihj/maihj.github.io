@@ -1,0 +1,211 @@
+<!--
+  Copyright (C) 2026 Maihj
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program. If not, see <https://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[MotherDuck] 一只母鸭和一群小鸭的故事</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RDPFG4P50X"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RDPFG4P50X');
+    </script>
+</head>
+<body>
+    <div class="starfield"></div>
+    <div class="stars" id="stars"></div>
+    <div class="binary-rain" id="binary-rain"></div>
+
+    <nav class="navbar">
+        <a href="../index.html" class="logo">&lt;/Start&gt;</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">首页</a></li>
+            <li><a href="../index.html#articles">文章</a></li>
+            <li><a href="../about.html">关于</a></li>
+            <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="article-page">
+            <a href="../index.html" class="back-btn">← 返回首页</a>
+            <header class="article-header">
+                <h1>[MotherDuck] 一只母鸭和一群小鸭的故事</h1>
+                <p class="article-meta">发布于 2026-03-21</p>
+            </header>
+
+            <article class="article-content">
+                <h2>故事的开头</h2>
+                <p>这是一只离家在外的小鸭，名叫小鸭C，工作日理万机，终于有一天，它受不了了，于是，向它家里的母亲发起求救：</p>
+                <blockquote>
+                    <p>"我太累了，每天都有干不完的活，可不可以分担一下我的工作"</p>
+                    <p>"好的，我派个小弟帮帮你"</p>
+                </blockquote>
+                <p>于是，母鸭让小鸭S去帮小鸭C，但是这两个孩子实在是相隔太远了，不能当面沟通，小鸭C的工作也无法直接交付给小鸭S，所以，两只小鸭之间需要搭建一个桥梁，能够高效地进行信息交互...</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/motherduck/idea.png" alt="idea" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图1：母鸭 vs 小鸭</p>
+                </div>
+
+                <p>接下来，主要围绕论文《MotherDuck: DuckDB in the cloud and in the client》介绍一下MotherDuck :)</p>
+                <p><strong>MotherDuck 就像母鸭和家里的一群小鸭（例如，小鸭S），而离家在外的小鸭C就像是运行在 laptop 或者其它 local machine 上的 DuckDB。</strong></p>
+
+                <h2>MotherDuck的故事</h2>
+                <p><strong>MotherDuck</strong> 是云原生 DuckDB 数据库服务，提供 DuckDB 数据存储和查询处理服务。而 DuckDB 是一个嵌入式分析系统，可以嵌入在发送 SQL 查询的 client 进程中，在 client 使用的 driver 或 API library 中运行，所以，所有使用 DuckDB 的 client 都有一个 local DuckDB，但有了 MotherDuck，query 也可以使用cloud DuckDB。</p>
+
+                <h2>设计理念</h2>
+                <p>DuckDB 作为嵌入式分析型数据库，其核心优势在于低延迟的本地分析能力，在2023年的云数据库分析报告中表示，超过 95% 的数据库大小小于1TB，超过 95% 的 query 查询小于 10GB 的数据。在"<strong>Big Data is Dead</strong>"的口号下，MotherDuck 的云原生架构依旧避免横向扩展。多节点任务调度不可避免地会引入额外的通信开销，增加端到端的查询延迟：查询必须通过节点之间的网络对数据进行 shuffle，从而增加网络和序列化/反序列化的 CPU 成本。</p>
+
+                <p>但是，面临本地存储扩展性不足和大规模数据处理的性能瓶颈（例如，处理PB级数据时，本地硬件资源可能成为性能瓶颈），单节点的 DuckDB 必须要解决扩展性的问题。而 MotherDuck，即通过云基础设施弥补这一短板：MotherDuck 基于 DuckDB 的开源生态，既保留了本地部署的灵活性，又通过云资源扩展了计算边界。也就是说，<strong>用户在本地 DuckDB 的基础上，可利用云端 DuckDB（支持scale-up/scale-down）来处理任务负载</strong>。</p>
+
+                <h2>MotherDuck 核心功能</h2>
+
+                <h3>支持 hybrid query processing（混合查询处理）</h3>
+                <ul>
+                    <li>如果全部数据在 local，则 DuckDB 只在 local 处理 query</li>
+                    <li>如果全部数据在 cloud，则 DuckDB 在 cloud 处理查询</li>
+                    <li>如果一部分数据在 local，一部分在 cloud，那么 query 的一部分将在 local 执行，一部分在 cloud 执行，local 和 cloud 之间通过 <strong>bridge 算子</strong>进行交互，负责上传和下载数据</li>
+                    <li>在一个 query 中，同时查 local DuckDB 和 cloud DuckDB 的数据，由 MotherDuck 优化器决定在哪里执行query</li>
+                    <li>现有 DuckDB 用户无需修改 query，即可无缝接入 cloud service</li>
+                </ul>
+
+                <h3>协作与资源共享</h3>
+                <p>可以与其他用户共享 cloud DuckDB，更好地进行协作。用户通过 MotherDuck SHARE 命令，可以指定 cloud 中哪些数据库是可以与其它用户分享的，类似地，通过 ATTACH 命令，以只读方式访问其他用户在云端的数据库。</p>
+
+                <h2>架构设计</h2>
+                <p>MotherDuck 采用<strong>计算存储分离</strong>的架构，由 client、compute、storage layers 组成。</p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img src="../images/motherduck/infra.png" alt="infra" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                    <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图2：MotherDuck 架构</p>
+                </div>
+
+                <h3>Client Layer</h3>
+                <p>即本地机器上的 DuckDB，通过 MotherDuck extension，连接到 cloud。</p>
+
+                <h3>Compute Layer（计算层）</h3>
+                <ul>
+                    <li>按需分配容器（container），每个容器内有一个 DuckDB 实例（<strong>duckling</strong>），为单个用户服务</li>
+                    <li>duckling 是无状态的，仅在查询执行期间存在，不用时则停止运行，避免资源限制</li>
+                    <li>容器所在的机器上如果有local SSD，那么 MotherDuck 会用来做本地缓存，提高查询性能</li>
+                    <li><strong>scale-up/scale-down</strong>：MotherDuck 提供3种不同规格的 duckling：PULSE、STANDARD、JUMBO</li>
+
+                    <div style="text-align: center; margin: 30px 0;">
+                        <img src="../images/motherduck/duckling.png" alt="duckling" style="max-width: 80%; height: auto; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);">
+                        <p style="color: #a0a0a0; font-size: 0.9rem; margin-top: 1px;">图3：MotherDuck Duckling</p>
+                    </div>
+
+                    <li><strong>scale-out</strong>：MotherDuck 针对读场景，可借助多个只读副本，提高读并发</li>
+                </ul>
+
+                <h3>Storage Layer（存储层）</h3>
+                <p>对象存储，例如 AWS S3。</p>
+                <ul>
+                    <li><strong>差异存储（differential storage）</strong>：因为像 S3 这样的服务不能修改文件，所以，数据修改是通过写入（多个）新文件，或者删除文件来完成的，duckling storage extension 支持差异存储，其中修改的数据作为 mutation tree 来单独存储；在此基础上，实现了零拷贝复制（zero-copy duplication）、共享（sharing）、分支（branching）和时间旅行（time travel）</li>
+                    <li>支持 <strong>multi-database storage</strong>，即 DuckDB 可以同时以只读或读写模式 ATTACH 到多个数据库文件</li>
+                </ul>
+
+                <h2>Hybrid Query Processing（HQP）</h2>
+                <p>处理一个 DuckDB query 会经历四个阶段：<strong>parsing（解析）、binding（绑定）、query optimization（查询优化）和 execution（执行）</strong>。</p>
+
+                <h3>Parsing 阶段</h3>
+                <p>在 client 端进行，解析用户输入的SQL查询语法，识别并处理 MotherDuck 的扩展语法。通过 <code>MD_RUN = REMOTE</code>（或者 <code>= LOCAL</code>）来指定在 duckling 还是 client 上进行 table scan。</p>
+
+                <h3>Binding 阶段</h3>
+                <p>在 client 端进行，通过 virtual catalog（虚拟目录），维护一个全局元数据视图，包含 local 和 cloud 中的数据库信息，保证在 binding 和生成执行计划的过程中能够获得表的schema和统计信息。</p>
+
+                <h3>Query Optimization 阶段</h3>
+                <p>在 client 端进行，优化器将查询拆分为多个逻辑片段（fragments），并根据以下原则分配执行位置：</p>
+                <ul>
+                    <li><strong>数据本地性</strong>：优先在数据存储位置（本地或云）执行计算，减少数据传输</li>
+                    <li><strong>传输成本</strong>：评估数据移动的开销，若本地计算成本高于传输数据到云的开销</li>
+                </ul>
+
+                <h3>Execution 阶段</h3>
+                <p>在 client 和 cloud 端进行，MotherDuck 引入 <strong>bridge 算子</strong>，来负责 client 和 duckling 之间的数据上传和下载。在混合查询计划中，client 和 duckling 是<strong>生产者-消费者</strong>的关系，如果生产者运行得比消费者快，那么中间数据量就会累积，导致效率低下、甚至资源耗尽或故障。对此，MotherDuck 采取流控的机制，将生产者暂停一段时间，直到消费者消耗了足够的数据，然后再让生产者继续工作。</p>
+
+                <h2>小结</h2>
+                <p>总的来说，MotherDuck 通过云服务，拓展了 local DuckDB 的处理能力，处理一个 query，可以同时使用两个节点，client 和 duckling。</p>
+
+                <h2>故事的最后</h2>
+                <p>某一天，小鸭C对小鸭S说："如果我们都干累了，怎么办？"</p>
+                <p>刚说完，小鸭C和小鸭S不禁倒抽一口凉气...</p>
+
+                <h2>参考</h2>
+                <ul>
+                    <li><a href="https://motherduck.com/" target="_blank">https://motherduck.com/</a></li>
+                    <li><a href="https://motherduck.com/blog/big-data-is-dead/" target="_blank">https://motherduck.com/blog/big-data-is-dead/</a></li>
+                    <li>《MotherDuck: DuckDB in the cloud and in the client》CIDR 2024</li>
+                    <li>《Cloud Analytics Benchmark》PVLDB 2023</li>
+                </ul>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Maihj. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function createBinaryRain() {
+            const rainContainer = document.getElementById('binary-rain');
+            const columnCount = 30;
+            for (let i = 0; i < columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-column';
+                column.style.left = (i / columnCount * 100) + '%';
+                column.style.setProperty('--duration', (Math.random() * 10 + 15) + 's');
+                column.style.animationDelay = Math.random() * 15 + 's';
+                let binaryString = '';
+                const length = Math.floor(Math.random() * 30 + 20);
+                for (let j = 0; j < length; j++) {
+                    binaryString += Math.random() > 0.5 ? '1' : '0';
+                }
+                column.textContent = binaryString;
+                rainContainer.appendChild(column);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createBinaryRain();
+        });
+    </script>
+</body>
+</html>
