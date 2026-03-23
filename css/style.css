@@ -1,4 +1,21 @@
-/* 全局样式 */
+/*
+  Copyright (C) 2026 Maihj
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+  
+  You should have received a copy of the GNU Affero General Public License
+  along with this program. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+/* Global Styles */
 * {
     margin: 0;
     padding: 0;
@@ -13,7 +30,7 @@ body {
     overflow-x: hidden;
 }
 
-/* 星空背景 */
+/* Starfield Background */
 .starfield {
     position: fixed;
     top: 0;
@@ -24,7 +41,7 @@ body {
     background: linear-gradient(to bottom, #0a0a1a 0%, #1a1a3a 50%, #0a0a1a 100%);
 }
 
-/* 星星 */
+/* Stars */
 .stars {
     position: fixed;
     top: 0;
@@ -46,7 +63,7 @@ body {
     50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* 二进制雨效果 */
+/* Binary Rain Effect */
 .binary-rain {
     position: fixed;
     top: 0;
@@ -75,7 +92,7 @@ body {
     100% { transform: translateY(200vh); }
 }
 
-/* 导航栏 */
+/* Navigation Bar  */
 .navbar {
     position: fixed;
     top: 0;
@@ -133,13 +150,13 @@ body {
     width: 100%;
 }
 
-/* 主内容区 */
+/* Main Content */
 .main-content {
     padding-top: 100px;
     min-height: 100vh;
 }
 
-/* 首页英雄区 */
+/* Hero Section */
 .hero {
     display: flex;
     flex-direction: column;
@@ -179,7 +196,7 @@ body {
     font-size: 1rem;
 }
 
-/* 文章列表区 */
+/* Article List */
 .articles-section {
     padding: 60px 50px;
     max-width: 1200px;
@@ -211,7 +228,7 @@ body {
     margin: 0 auto;
 }
 
-/* 文章卡片 */
+/* Article Card */
 .article-card {
     background: rgba(26, 26, 58, 0.6);
     border: 1px solid rgba(0, 255, 136, 0.2);
@@ -293,7 +310,7 @@ body {
     text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
-/* 文章详情页 */
+/* Article Details */
 .article-page {
     max-width: 800px;
     margin: 0 auto;
@@ -406,7 +423,7 @@ body {
     text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
 }
 
-/* 返回按钮 */
+/* Back Button */
 .back-btn {
     display: inline-flex;
     align-items: center;
@@ -423,7 +440,7 @@ body {
     text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
-/* 页脚 */
+/* Footer */
 .footer {
     text-align: center;
     padding: 40px 20px;
@@ -453,7 +470,7 @@ body {
     color: #00ff88;
 }
 
-/* About页面样式 */
+/* About Page */
 .about-page {
     display: flex;
     justify-content: center;
@@ -515,7 +532,7 @@ body {
     50% { transform: scale(1.1); opacity: 0.8; }
 }
 
-/* 响应式设计 */
+/* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
         padding: 15px 20px;
