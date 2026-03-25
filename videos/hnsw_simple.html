@@ -1,0 +1,210 @@
+<!--
+  Copyright (C) 2026 Maihj
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License
+  along with this program. If not, see <https://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HNSW算法科普：向量数据库的秘密武器 | 脑洞一光年</title>
+    <meta name="description" content="用通俗易懂的方式讲解HNSW算法，从六度分隔理论到向量搜索，6分钟理解向量数据库的核心技术。">
+    <meta name="keywords" content="HNSW,向量数据库,近邻搜索,六度分隔,算法科普,B站视频">
+    <meta name="author" content="Maihj">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://maihj.github.io/videos/hnsw_simple.html">
+    <meta property="og:type" content="video.other">
+    <meta property="og:url" content="https://maihj.github.io/videos/hnsw_simple.html">
+    <meta property="og:title" content="HNSW算法科普：向量数据库的秘密武器">
+    <meta property="og:description" content="用通俗易懂的方式讲解HNSW算法，6分钟理解向量数据库的核心技术">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="HNSW算法科普：向量数据库的秘密武器">
+    <meta name="twitter:description" content="用通俗易懂的方式讲解HNSW算法，6分钟理解向量数据库的核心技术">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/analytics.js"></script>
+    <style>
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            margin: 30px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-info {
+            background: rgba(26, 26, 58, 0.6);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        .video-info h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .video-info ul {
+            list-style: none;
+            padding: 0;
+        }
+        .video-info li {
+            color: #a0a0a0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .video-info li:last-child {
+            border-bottom: none;
+        }
+        .video-info li::before {
+            content: '▸ ';
+            color: #00d4ff;
+        }
+        .bilibili-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #fb7299, #ff9966);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        .bilibili-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(251, 114, 153, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="starfield"></div>
+    <div class="stars" id="stars"></div>
+    <div class="binary-rain" id="binary-rain"></div>
+
+    <nav class="navbar">
+        <a href="../index.html" class="logo">&lt;/Start&gt;</a>
+        <ul class="nav-links">
+            <li><a href="../index.html">首页</a></li>
+            <li><a href="../index.html#articles">文章</a></li>
+            <li><a href="../about.html">关于</a></li>
+            <li><a href="https://github.com/maihj" target="_blank">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="article-page">
+            <a href="../index.html" class="back-btn">← 返回首页</a>
+            <header class="article-header">
+                <h1>HNSW算法科普：向量数据库的秘密武器</h1>
+                <p class="article-meta">发布于 2026-03-21</p>
+            </header>
+
+            <div class="article-content">
+                <div class="video-container">
+                    <iframe 
+                        src="//player.bilibili.com/player.html?bvid=BV1uVQSBEEVv&page=1&high_quality=1&danmaku=0" 
+                        scrolling="no" 
+                        border="0" 
+                        frameborder="no" 
+                        framespacing="0" 
+                        allowfullscreen="true">
+                    </iframe>
+                </div>
+
+                <a href="https://www.bilibili.com/video/BV1uVQSBEEVv/" target="_blank" class="bilibili-link">
+                    📺 在B站观看完整视频
+                </a>
+
+                <div class="video-info">
+                    <h3>视频内容概要</h3>
+                    <ul>
+                        <li>六度分隔理论：为什么世界上任意两个人只需要6个人就能建立联系？</li>
+                        <li>小世界网络：如何用数学模型解释社交网络的神奇特性？</li>
+                        <li>NSW算法：把"找朋友"的思路应用到向量搜索</li>
+                        <li>HNSW算法：分层结构让搜索速度飞跃提升</li>
+                        <li>实际应用：为什么各大向量数据库都选择HNSW？</li>
+                    </ul>
+                </div>
+
+                <h2>相关文章</h2>
+                <p>想要深入了解HNSW算法的技术细节？推荐阅读：</p>
+                <ul>
+                    <li><a href="../articles/nsw_hnsw.html">NSW 和 HNSW：基于小世界图的高效近邻搜索</a></li>
+                    <li><a href="../articles/vector_db_1.html">什么是向量数据库（一）</a></li>
+                    <li><a href="../articles/vector_db_2.html">什么是向量数据库（二）</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Maihj. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function createBinaryRain() {
+            const rainContainer = document.getElementById('binary-rain');
+            const columnCount = 30;
+            for (let i = 0; i < columnCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'binary-column';
+                column.style.left = (i / columnCount * 100) + '%';
+                column.style.setProperty('--duration', (Math.random() * 10 + 15) + 's');
+                column.style.animationDelay = Math.random() * 15 + 's';
+                let binaryString = '';
+                const length = Math.floor(Math.random() * 30 + 20);
+                for (let j = 0; j < length; j++) {
+                    binaryString += Math.random() > 0.5 ? '1' : '0';
+                }
+                column.textContent = binaryString;
+                rainContainer.appendChild(column);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createBinaryRain();
+        });
+    </script>
+</body>
+</html>
