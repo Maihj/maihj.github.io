@@ -318,12 +318,10 @@ body {
 }
 
 .videos-grid {
-    display: flex;
-    flex-wrap: wrap;
+    display: flex !important;
+    flex-wrap: nowrap;
     justify-content: center;
     gap: 30px;
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 .video-card {
@@ -332,8 +330,8 @@ body {
     border-radius: 15px;
     overflow: hidden;
     transition: all 0.3s ease;
-    width: 100%;
-    max-width: 400px;
+    width: 400px;
+    min-width: 400px;
 }
 
 .video-card:hover {
@@ -692,6 +690,15 @@ body {
 
     .articles-grid {
         grid-template-columns: 1fr;
+    }
+
+    .videos-grid {
+        flex-wrap: wrap;
+    }
+
+    .video-card {
+        width: 100%;
+        min-width: unset;
     }
 
     .article-header h1 {
