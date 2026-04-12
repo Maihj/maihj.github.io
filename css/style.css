@@ -319,9 +319,11 @@ body {
 
 .videos-grid {
     display: flex !important;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 30px;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .video-card {
@@ -330,8 +332,8 @@ body {
     border-radius: 15px;
     overflow: hidden;
     transition: all 0.3s ease;
-    width: 400px;
-    min-width: 400px;
+    width: calc(50% - 15px);
+    min-width: 280px;
 }
 
 .video-card:hover {
@@ -659,7 +661,7 @@ body {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .navbar {
         padding: 15px 20px;
     }
